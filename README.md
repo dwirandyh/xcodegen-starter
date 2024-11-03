@@ -16,18 +16,6 @@ A starter iOS project configured with Xcodegen and hot reload capability using I
 - Xcode 15.0+
 - XcodeGen
 
-## Project Structure
-
-XcodegenStarter/
-├── project.yml
-├── XcodegenStarter/
-│   ├── XcodegenStarterApp.swift
-│   ├── ContentView.swift
-│   ├── Assets.xcassets
-│   └── Info.plist
-├── XcodegenStarterTests/
-└── XcodegenStarterUITests/
-
 ## Setup
 
 1. Install XcodeGen if you haven't already:
