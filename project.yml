@@ -1,0 +1,101 @@
+# Project name and basic configuration
+name: XcodegenStarter
+options:
+  deploymentTarget:
+    iOS: "15.0"  # Minimum supported iOS version
+  postGenCommand: open XcodegenStarter.xcodeproj  # Command executed after project generation
+  
+# Build configurations
+configs:
+  Debug: debug
+  Release: release
+
+# Global project settings
+settings:
+  base:
+    DEVELOPMENT_TEAM: XXXXXXXXXX # Replace with your Development Team ID
+    MARKETING_VERSION: 1.1.0     # App Store version number
+    CURRENT_PROJECT_VERSION: 2    # Build number
+
+# Swift Package Manager dependencies
+packages:
+  Inject:  # Package for hot reloading
+    url: https://github.com/krzysztofzablocki/Inject.git
+    from: 1.2.4
+
+# Project targets configuration
+targets:
+  # Main application target
+  XcodegenStarter:
+    type: application
+    platform: iOS
+    sources:
+      - XcodegenStarter  # Main source code folder
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.company.XcodegenStarter
+      configs:
+        Debug:
+          OTHER_LDFLAGS: "$(inherited) -Xlinker -interposable"  # Required for Inject (hot reloading)
+    dependencies:
+      - package: Inject
+    info:
+      path: XcodegenStarter/Info.plist
+      properties:
+        UILaunchStoryboardName: LaunchScreen
+        UIApplicationSceneManifest:  # iOS scene configuration
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+
+  # Unit testing target
+  XcodegenStarterTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - XcodegenStarterTests
+    dependencies:
+      - target: XcodegenStarter  # Dependency to main target
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.company.XcodegenStarter.tests
+
+  # UI testing target
+  XcodegenStarterUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - XcodegenStarterUITests
+    dependencies:
+      - target: XcodegenStarter  # Dependency to main target
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.company.XcodegenStarter.uitests
+
+# Build and testing scheme configuration
+schemes:
+  XcodegenStarter:
+    build:
+      targets:
+        XcodegenStarter: all
+    run:
+      config: Debug  # Use Debug configuration for running
+    test:
+      config: Debug
+      gatherCoverageData: true  # Collect code coverage data
+      targets:  # Test execution configuration
+        - name: XcodegenStarterTests
+          parallelizable: true    # Tests can run in parallel
+          randomExecutionOrder: true  # Randomize test order to avoid dependencies
+        - name: XcodegenStarterUITests
+          parallelizable: true
+          randomExecutionOrder: true
+    profile:
+      config: Release  # Use Release configuration for profiling
+    analyze:
+      config: Debug   # Use Debug configuration for static analysis
+    archive:
+      config: Release # Use Release configuration for archiving
+
